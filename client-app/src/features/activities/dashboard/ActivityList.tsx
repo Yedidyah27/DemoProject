@@ -1,19 +1,19 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Item, Button, Label, Segment } from 'semantic-ui-react'
-import { IActivity } from '../../../models/activity'
+import { observer } from 'mobx-react-lite'
+import ActivityStore from '../../../app/Stores/activityStore'
 
 interface IProps{
-    activities: IActivity[]
-    selectActivity: (id:string) => void;
-    selectedActivity: IActivity| null;
-    deleteActivity:(id:string) => void;
+
 }
 
-export const ActivityList:React.FC<IProps> = ({activities, selectedActivity, selectActivity, deleteActivity}) => {
+export const ActivityList:React.FC<IProps> = () => {
+    const activityStore = useContext(ActivityStore);
+     const {activitiesByDate, selectActivity, deleteActivity, target, submitting} = activityStore;
     return (
         <Segment clearing>
             <Item.Group divided>
-                {activities.map(act =>(
+                {activitiesByDate.map(act =>(
                     <Item key={act.id}>
                     <Item.Content>
                         <Item.Header as='a'>{act.title}</Item.Header>
@@ -24,11 +24,15 @@ export const ActivityList:React.FC<IProps> = ({activities, selectedActivity, sel
                         </Item.Description>
                         <Item.Extra>
                             <Button onClick={() =>(selectActivity(act.id))} 
+                                    loading = {target === `${act.id}Submit` && submitting}
+                                    name={`${act.id}Submit`}
                                     floated='right' 
                                     content='View' 
                                     color='blue'/>
-                                    <Button onClick={() =>(deleteActivity(act.id))} 
+                                    <Button onClick={(e) =>(deleteActivity(act.id, e))} 
                                     floated='right' 
+                                    loading = {target === `${act.id}Delete` && submitting}
+                                    name={`${act.id}Delete`}
                                     content='Delete' 
                                     color='red'/>
                             <Label basic content={act.category}/>
@@ -41,4 +45,4 @@ export const ActivityList:React.FC<IProps> = ({activities, selectedActivity, sel
     )
 }
 
-export default ActivityList;
+export default observer (ActivityList);
