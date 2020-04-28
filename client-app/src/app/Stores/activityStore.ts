@@ -34,8 +34,7 @@ class ActivityStore{
                 activities.forEach( a =>{
                     a.date = a.date.split('.')[0];
                     this.activityRegistry.set(a.id, a); 
-            });
-            console.log(this.groupActivitiesByDate(activities));     
+            });              
           });
         }catch(error){
             console.log(error);
